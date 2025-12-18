@@ -421,5 +421,3 @@ function showDash(u) {
     document.getElementById('adminEmail').textContent = u.email;
     loadJobs();
 }
-
-// ... REST OF YOUR EXISTING CODE (all functions from admin.html script section) ...

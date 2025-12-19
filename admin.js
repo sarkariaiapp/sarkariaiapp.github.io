@@ -393,31 +393,3 @@ function useAiResult() {
 function closeAiModal() {
     document.getElementById('aiModal').classList.remove('active');
 }
-
-async function checkAuth() {
-    const { data: { user } } = await sb.auth.getUser();
-    if (user && ADM.includes(user.email)) showDash(user);
-    else document.getElementById('loginScreen').classList.remove('hidden');
-}
-
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    try {
-        const { data, error } = await sb.auth.signInWithPassword({
-            email: document.getElementById('loginEmail').value,
-            password: document.getElementById('loginPassword').value
-        });
-        if (error) throw error;
-        if (!ADM.includes(data.user.email)) throw new Error('Access Denied');
-        showDash(data.user);
-    } catch (e) {
-        msg(e.message, 'error', 'loginMessage');
-    }
-});
-
-function showDash(u) {
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('dashboard').classList.remove('hidden');
-    document.getElementById('adminEmail').textContent = u.email;
-    loadJobs();
-}

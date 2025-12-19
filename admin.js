@@ -193,17 +193,17 @@ async function loadJobs() {
     if (!data || !data.length) { c.innerHTML = '<p>No jobs</p>'; return; }
     c.innerHTML = data.map(j => {
         return `
-                    <div class="job-card">
-                        <h3 style="color: #667eea;">${j.title}</h3>
-                        <p>${j.organization} • ${j.post_name}</p>
-                        <p style="margin-top: 10px;"><b>Start:</b> ${fd(j.application_start_date || j.posted_date)}</p>
-                        <p><b>Deadline:</b> ${fd(j.application_deadline)}</p>
-                        <div style="margin-top: 15px;">
-                            <button class="btn btn-primary" onclick='editJob(${JSON.stringify(j).replace(/'/g, "\\'")})'> Edit</button>
-                            <button class="btn btn-danger" onclick="delJob('${j.id}')">Delete</button>
-                        </div>
-                    </div>
-                `;
+            <div class="job-card">
+                <h3 style="color: #667eea;">${j.title}</h3>
+                <p>${j.organization} • ${j.post_name}</p>
+                <p style="margin-top: 10px;"><b>Start:</b> ${fd(j.application_start_date || j.posted_date)}</p>
+                <p><b>Deadline:</b> ${fd(j.application_deadline)}</p>
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-primary" onclick="editJobById('${j.id}')">Edit</button>
+                    <button class="btn btn-danger" onclick="delJob('${j.id}')">Delete</button>
+                </div>
+            </div>
+        `;
     }).join('');
 }
 
@@ -266,7 +266,15 @@ function rmFld(f) {
     ).join('');
 }
 
-async function editJob(j) {
+async function editJobById(id) {
+    // Fetch fresh data from database
+    const { data: jobs } = await sb.from('jobs').select('*').eq('id', id).single();
+    if (!jobs) {
+        alert('Job not found!');
+        return;
+    }
+    
+    const j = jobs;
     isEdit = true;
     document.getElementById('modalTitle').textContent = 'Edit';
     document.getElementById('jobId').value = j.id;
